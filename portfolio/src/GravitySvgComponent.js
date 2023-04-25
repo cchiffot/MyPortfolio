@@ -57,7 +57,7 @@ const GravitySvgComponent = () => {
 						Body.translate(body, { x: 0, y: -deltaY * 0.5 });
 					}
 				});
-			}, 50);
+			}, 10);
 		}
 	};
 

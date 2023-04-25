@@ -6,7 +6,7 @@ function App() {
 	return (
 		<div className="App">
 			<header className="App-header">
-				<h1>Gravity SVG Demo</h1>
+				<h1>Calvin CHIFFOT</h1>
 			</header>
 			<main>
 				<GravitySvgComponent />
