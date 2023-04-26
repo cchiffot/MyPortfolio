@@ -11,6 +11,34 @@ import {
 } from "matter-js";
 import mySvg from "./logo.svg";
 
+const createSvgCircle = (x, y, texture) => {
+	const circle = Bodies.circle(x, y, 40, {
+		restitution: 1,
+		render: {
+			sprite: {
+				texture: texture,
+				xScale: 0.5,
+				yScale: 0.5
+			}
+		}
+	});
+	return circle;
+};
+
+const createCircles = () => [
+	createSvgCircle(200, 200, mySvg),
+	createSvgCircle(300, 200, mySvg),
+	createSvgCircle(400, 200, mySvg),
+	createSvgCircle(500, 200, mySvg),
+	createSvgCircle(600, 200, mySvg),
+	createSvgCircle(200, 200, mySvg),
+	createSvgCircle(300, 200, mySvg),
+	createSvgCircle(400, 200, mySvg),
+	createSvgCircle(500, 200, mySvg),
+	createSvgCircle(600, 200, mySvg),
+	createSvgCircle(200, 300, mySvg)
+];
+
 const GravitySvgComponent = () => {
 	const sceneRef = useRef(null);
 	const [scrollY, setScrollY] = useState(0);
@@ -29,8 +57,22 @@ const GravitySvgComponent = () => {
 						Body.translate(body, { x: 0, y: -deltaY * 0.5 });
 					}
 				});
-			}, 50);
+			}, 10);
 		}
+	};
+
+	const [circles, setCircles] = useState(createCircles()); // <-- Store circles in state
+
+	const resetCircles = () => {
+		circles.forEach((circle) => {
+			World.remove(engineRef.current.world, circle);
+		});
+
+		const newCircles = createCircles();
+
+		setCircles(newCircles);
+
+		World.add(engineRef.current.world, newCircles);
 	};
 
 	useEffect(() => {
@@ -44,7 +86,7 @@ const GravitySvgComponent = () => {
 	useEffect(() => {
 		const engine = Engine.create({
 			gravity: {
-				scale: 0,
+				scale: 0.0002,
 				x: 0,
 				y: 1
 			}
@@ -80,84 +122,6 @@ const GravitySvgComponent = () => {
 			restitution: 1
 		});
 
-		const createSvgCircle = (x, y) => {
-			const circle = Bodies.circle(x, y, 40, {
-				restitution: 1,
-				render: {
-					sprite: {
-						texture: mySvg,
-						xScale: 0.5,
-						yScale: 0.5
-					}
-				}
-			});
-			return circle;
-		};
-
-		const circles = [
-			createSvgCircle(200, 200),
-			createSvgCircle(300, 200),
-			createSvgCircle(400, 200),
-			createSvgCircle(500, 200),
-			createSvgCircle(600, 200),
-			createSvgCircle(200, 200),
-			createSvgCircle(300, 200),
-			createSvgCircle(400, 200),
-			createSvgCircle(500, 200),
-			createSvgCircle(600, 200),
-			createSvgCircle(200, 200),
-			createSvgCircle(300, 200),
-			createSvgCircle(400, 200),
-			createSvgCircle(500, 200),
-			createSvgCircle(600, 200),
-			createSvgCircle(200, 200),
-			createSvgCircle(300, 200),
-			createSvgCircle(400, 200),
-			createSvgCircle(500, 200),
-			createSvgCircle(600, 200),
-			createSvgCircle(200, 200),
-			createSvgCircle(300, 200),
-			createSvgCircle(400, 200),
-			createSvgCircle(500, 200),
-			createSvgCircle(600, 200),
-			createSvgCircle(200, 200),
-			createSvgCircle(300, 200),
-			createSvgCircle(400, 200),
-			createSvgCircle(500, 200),
-			createSvgCircle(600, 200),
-			createSvgCircle(200, 200),
-			createSvgCircle(300, 200),
-			createSvgCircle(400, 200),
-			createSvgCircle(500, 200),
-			createSvgCircle(600, 200),
-			createSvgCircle(200, 200),
-			createSvgCircle(300, 200),
-			createSvgCircle(400, 200),
-			createSvgCircle(500, 200),
-			createSvgCircle(600, 200),
-			createSvgCircle(200, 200),
-			createSvgCircle(300, 200),
-			createSvgCircle(400, 200),
-			createSvgCircle(500, 200),
-			createSvgCircle(600, 200),
-			createSvgCircle(200, 200),
-			createSvgCircle(300, 200),
-			createSvgCircle(400, 200),
-			createSvgCircle(500, 200),
-			createSvgCircle(600, 200),
-			createSvgCircle(200, 200),
-			createSvgCircle(300, 200),
-			createSvgCircle(400, 200),
-			createSvgCircle(500, 200),
-			createSvgCircle(600, 200),
-			createSvgCircle(200, 200),
-			createSvgCircle(300, 200),
-			createSvgCircle(400, 200),
-			createSvgCircle(500, 200),
-			createSvgCircle(600, 200),
-			createSvgCircle(200, 300)
-		];
-
 		World.add(engine.world, [ground, leftWall, rightWall, ceiling, ...circles]);
 
 		const mouse = Mouse.create(render.canvas);
@@ -185,9 +149,25 @@ const GravitySvgComponent = () => {
 			render.context = null;
 			render.textures = {};
 		};
-	}, []);
+	}, [circles, handleScroll]);
 
-	return <div ref={sceneRef} />;
+	return (
+		<div>
+			<div ref={sceneRef} />
+			<button
+				onClick={resetCircles}
+				style={{
+					display: "block",
+					margin: "20px auto",
+					backgroundColor: "#f0f0f0",
+					borderRadius: "5px",
+					padding: "10px 20px"
+				}}
+			>
+				Reset Circles
+			</button>
+		</div>
+	);
 };
 
 export default GravitySvgComponent;
