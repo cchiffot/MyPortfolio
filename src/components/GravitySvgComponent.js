@@ -9,7 +9,7 @@ import {
 	Mouse,
 	Body
 } from "matter-js";
-import mySvg from "./logo.svg";
+import mySvg from "../assets/logo.svg";
 
 const createSvgCircle = (x, y, texture) => {
 	const circle = Bodies.circle(x, y, 40, {
